@@ -1,5 +1,5 @@
 //! Local admin API (`[admin] listen`, default `127.0.0.1:9060`) and the CLI
-//! client behind `sip2agent reload | stop | status`.
+//! client behind `sippipe reload | stop | status`.
 //!
 //! Endpoints (JSON, `Connection: close`):
 //! - `POST /reload` — re-read the server's OWN config file (no config content
@@ -556,7 +556,7 @@ pub fn format_duration(secs: u64) -> String {
 
 pub fn format_status(s: &StatusResponse) -> String {
     let mut out = format!(
-        "sip2agent {} 运行中(已运行 {})\n  配置文件: {}\n  状态: {}\n  进行中的通话: {}",
+        "sippipe {} 运行中(已运行 {})\n  配置文件: {}\n  状态: {}\n  进行中的通话: {}",
         s.version,
         format_duration(s.uptime_secs),
         s.config_path,
@@ -596,10 +596,10 @@ pub fn format_stop(r: &StopResponse, drain: bool) -> String {
 // ───────────────────────────── CLI commands ─────────────────────────────
 
 pub const CLI_USAGE: &str = "usage:
-  sip2agent [run] [-c|--config <config.toml>] [--check]   启动服务(--check 只校验配置)
-  sip2agent reload [-c <config.toml>] [--address <ip:port>]
-  sip2agent status [-c <config.toml>] [--address <ip:port>]
-  sip2agent stop   [-c <config.toml>] [--address <ip:port>] [--drain] [--timeout <秒>]";
+  sippipe [run] [-c|--config <config.toml>] [--check]   启动服务(--check 只校验配置)
+  sippipe reload [-c <config.toml>] [--address <ip:port>]
+  sippipe status [-c <config.toml>] [--address <ip:port>]
+  sippipe stop   [-c <config.toml>] [--address <ip:port>] [--drain] [--timeout <秒>]";
 
 struct CliArgs {
     config: PathBuf,
@@ -781,7 +781,7 @@ mod tests {
 
     #[test]
     fn admin_listen_read_leniently() {
-        let dir = std::env::temp_dir().join(format!("sip2agent-admin-{}", uuid::Uuid::new_v4()));
+        let dir = std::env::temp_dir().join(format!("sippipe-admin-{}", uuid::Uuid::new_v4()));
         std::fs::create_dir_all(&dir).unwrap();
         let p = dir.join("c.toml");
         assert_eq!(admin_listen_from_file(&p), None, "missing file");
@@ -879,7 +879,7 @@ mod tests {
         };
         let out = format_status(&s);
         assert!(
-            out.contains("sip2agent 0.1.3 运行中(已运行 1小时2分)"),
+            out.contains("sippipe 0.1.3 运行中(已运行 1小时2分)"),
             "{out}"
         );
         assert!(out.contains("排空中"), "{out}");

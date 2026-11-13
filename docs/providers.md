@@ -35,7 +35,7 @@
 
 ## Qwen-Omni Realtime(`qwen3.8-omni-flash-realtime`)
 
-依据:阿里云百炼 [client-events](https://help.aliyun.com/zh/model-studio/client-events) / [server-events](https://help.aliyun.com/zh/model-studio/server-events) 文档(2026-10),以及**实测 2026-10-22**(完整 SIP 链路:测试 UAC → sip2agent → Qwen)。
+依据:阿里云百炼 [client-events](https://help.aliyun.com/zh/model-studio/client-events) / [server-events](https://help.aliyun.com/zh/model-studio/server-events) 文档(2026-10),以及**实测 2026-10-22**(完整 SIP 链路:测试 UAC → sippipe → Qwen)。
 
 - **连接**:地址必须是业务空间专属域名 `wss://{WorkspaceId}.{region}.maas.aliyuncs.com/api-ws/v1/realtime`,`?model=` 由程序追加。请求头 `Authorization: Bearer <DashScope key>`。
 - **建会话**:先发 `session.update`,**收到 `session.updated` 之后才发音频**。

@@ -1,4 +1,4 @@
-# sip2agent
+# sippipe
 
 Rust 单二进制:呼入 SIP(G.711)↔ 厂商实时语音到语音模型(WebSocket)。用户文档见 README.md。
 
@@ -10,14 +10,14 @@ cargo run -- -c config.toml [--check]
 cargo run --example uac -- --server 127.0.0.1:5060 --to 9000 --secs 3        # 测试 UAC
 cargo run --example pcm_ws_echo -- --listen 127.0.0.1:9100                    # 参考 pcm_ws 服务
 # Qwen 真实联调(默认跳过;wav 用 macOS say 生成,见 tests/qwen_live.rs 头注释)
-SIP2AGENT_QWEN_LIVE=1 SIP2AGENT_LIVE_DIR=<wav目录> QWEN_URL=wss://... DASHSCOPE_API_KEY=... cargo test --test qwen_live -- --nocapture --test-threads=1
+SIPPIPE_QWEN_LIVE=1 SIPPIPE_LIVE_DIR=<wav目录> QWEN_URL=wss://... DASHSCOPE_API_KEY=... cargo test --test qwen_live -- --nocapture --test-threads=1
 ```
 
 - 工具链 Rust 1.92,edition 2024,tokio。lib + bin 同一个 crate(lib 供 tests/examples 复用)。
 - TLS 统一走 rustls + ring(`install_crypto_provider()`),**不要引入 aws-lc / openssl / native-tls**(Docker 构建与交叉编译都会变复杂)。
 - GitHub Actions(`CARGO_MIRROR=` 直连 crates.io):
-  - `ci.yml`:push main / PR 跑 fmt/clippy/test + docker build;push main 时推 `ghcr.io/<owner>/sip2agent:latest` / `sha-<短sha>`
-  - `release.yml`:打 tag `v*` → linux x86_64 / linux aarch64 / macOS arm64 二进制 tar.gz 上传 GitHub Release,并推多架构镜像 `ghcr.io/<owner>/sip2agent:<版本>`
+  - `ci.yml`:push main / PR 跑 fmt/clippy/test + docker build;push main 时推 `ghcr.io/<owner>/sippipe:latest` / `sha-<短sha>`
+  - `release.yml`:打 tag `v*` → linux x86_64 / linux aarch64 / macOS arm64 二进制 tar.gz 上传 GitHub Release,并推多架构镜像 `ghcr.io/<owner>/sippipe:<版本>`
 - CI:`.cnb.yml` 在 main push 时跑 fmt/clippy/test,再 buildx 推 `${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}:{日期-sha}` 和 `latest`。
 
 ## 模块地图

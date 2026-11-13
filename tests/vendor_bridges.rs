@@ -7,13 +7,13 @@ mod common;
 use base64::Engine as _;
 use common::*;
 use serde_json::{Value, json};
-use sip2agent::config::Config;
-use sip2agent::realtime::bridge::{
+use sippipe::config::Config;
+use sippipe::realtime::bridge::{
     BridgeEnd, BridgeResult, Keepalive, connect, run_bridge_with_keepalive,
 };
-use sip2agent::realtime::protocol_for;
-use sip2agent::rtp::MediaPort;
-use sip2agent::webhook::ToolDispatcher;
+use sippipe::realtime::protocol_for;
+use sippipe::rtp::MediaPort;
+use sippipe::webhook::ToolDispatcher;
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tokio::sync::{mpsc, oneshot};
@@ -21,11 +21,11 @@ use tokio::task::JoinHandle;
 use tokio_util::sync::CancellationToken;
 
 fn b64(pcm: &[i16]) -> String {
-    base64::engine::general_purpose::STANDARD.encode(sip2agent::audio::pcm_to_bytes(pcm))
+    base64::engine::general_purpose::STANDARD.encode(sippipe::audio::pcm_to_bytes(pcm))
 }
 
 fn unb64(s: &str) -> Vec<i16> {
-    sip2agent::audio::bytes_to_pcm(&base64::engine::general_purpose::STANDARD.decode(s).unwrap())
+    sippipe::audio::bytes_to_pcm(&base64::engine::general_purpose::STANDARD.decode(s).unwrap())
 }
 
 struct Harness {
@@ -40,7 +40,7 @@ async fn start_bridge(config: &str, call_id: &str) -> Harness {
 }
 
 async fn start_bridge_with(config: &str, call_id: &str, keepalive: Keepalive) -> Harness {
-    sip2agent::install_crypto_provider();
+    sippipe::install_crypto_provider();
     let cfg = Config::parse(config).unwrap();
     let agent = cfg.agents[0].clone();
     let protocol = protocol_for(&agent).unwrap();
@@ -558,8 +558,8 @@ async fn doubao_fatal_error_and_ready_timeout() {
 
 #[tokio::test]
 async fn tool_dispatcher_errors_are_reported_to_model() {
-    sip2agent::install_crypto_provider();
-    let call = sip2agent::realtime::ToolCall {
+    sippipe::install_crypto_provider();
+    let call = sippipe::realtime::ToolCall {
         call_id: "c".into(),
         name: "t".into(),
         arguments: "not-json".into(),

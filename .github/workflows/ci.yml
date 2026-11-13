@@ -27,7 +27,7 @@ jobs:
       - run: cargo clippy --all-targets --locked -- -D warnings
       - run: cargo test --locked
 
-  # PR 只验证能构建;push main 推 ghcr.io/<owner>/sip2agent:latest + sha-<短 sha>
+  # PR 只验证能构建;push main 推 ghcr.io/<owner>/sippipe:latest + sha-<短 sha>
   docker:
     name: docker
     runs-on: ubuntu-latest

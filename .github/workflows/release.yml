@@ -1,6 +1,6 @@
 name: Release
 
-# 打 tag v* 触发:各平台二进制上传到 GitHub Release + 多架构镜像推 ghcr.io/<owner>/sip2agent:<版本>
+# 打 tag v* 触发:各平台二进制上传到 GitHub Release + 多架构镜像推 ghcr.io/<owner>/sippipe:<版本>
 on:
   push:
     tags: ["v*"]
@@ -28,13 +28,13 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.target }}
-      - run: cargo build --release --locked --bin sip2agent --target ${{ matrix.target }}
+      - run: cargo build --release --locked --bin sippipe --target ${{ matrix.target }}
       - name: package
         shell: bash
         run: |
-          name=sip2agent-${GITHUB_REF_NAME}-${{ matrix.target }}
+          name=sippipe-${GITHUB_REF_NAME}-${{ matrix.target }}
           mkdir -p dist/$name
-          cp target/${{ matrix.target }}/release/sip2agent config.example.toml README.md LICENSE dist/$name/
+          cp target/${{ matrix.target }}/release/sippipe config.example.toml README.md LICENSE dist/$name/
           tar -C dist -czf dist/$name.tar.gz $name
           (cd dist && shasum -a 256 $name.tar.gz > $name.tar.gz.sha256)
       - uses: actions/upload-artifact@v4

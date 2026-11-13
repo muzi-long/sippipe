@@ -1,11 +1,11 @@
 //! Shared test helpers: mock HTTP webhook server, mock WebSocket server,
-//! in-process sip2agent server.
+//! in-process sippipe server.
 #![allow(dead_code)]
 
 use futures::{SinkExt, StreamExt};
 use serde_json::Value;
-use sip2agent::config::{Config, SharedConfig};
-use sip2agent::sip::SipServer;
+use sippipe::config::{Config, SharedConfig};
+use sippipe::sip::SipServer;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::time::Duration;
@@ -178,7 +178,7 @@ pub async fn mock_ws() -> (String, mpsc::UnboundedReceiver<WsConn>) {
     (format!("ws://{addr}"), rx)
 }
 
-/// Start sip2agent in-process on an ephemeral port.
+/// Start sippipe in-process on an ephemeral port.
 pub async fn start_server(config: &str) -> (SocketAddr, CancellationToken) {
     let (addr, shutdown, _) = start_server_shared(config).await;
     (addr, shutdown)
@@ -188,7 +188,7 @@ pub async fn start_server(config: &str) -> (SocketAddr, CancellationToken) {
 pub async fn start_server_shared(
     config: &str,
 ) -> (SocketAddr, CancellationToken, Arc<SharedConfig>) {
-    sip2agent::install_crypto_provider();
+    sippipe::install_crypto_provider();
     let cfg = Config::parse(config).expect("config");
     let server = SipServer::bind_shared(Arc::new(SharedConfig::new(cfg)))
         .await

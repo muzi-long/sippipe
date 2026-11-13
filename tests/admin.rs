@@ -1,11 +1,11 @@
-//! Admin API end to end: in-process sip2agent + admin HTTP server on an
+//! Admin API end to end: in-process sippipe + admin HTTP server on an
 //! ephemeral port, driven through the same client the CLI uses.
 
 use serde_json::Value;
-use sip2agent::admin::{self, AdminState, ReloadResponse, Reloader, StatusResponse};
-use sip2agent::config::{Config, SharedConfig};
-use sip2agent::sip::SipServer;
-use sip2agent::uac::{UacOptions, run};
+use sippipe::admin::{self, AdminState, ReloadResponse, Reloader, StatusResponse};
+use sippipe::config::{Config, SharedConfig};
+use sippipe::sip::SipServer;
+use sippipe::uac::{UacOptions, run};
 use std::net::SocketAddr;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -48,8 +48,8 @@ impl Drop for Harness {
 }
 
 async fn start(config: &str) -> Harness {
-    sip2agent::install_crypto_provider();
-    let dir = std::env::temp_dir().join(format!("sip2agent-admin-{}", uuid::Uuid::new_v4()));
+    sippipe::install_crypto_provider();
+    let dir = std::env::temp_dir().join(format!("sippipe-admin-{}", uuid::Uuid::new_v4()));
     std::fs::create_dir_all(&dir).unwrap();
     let path = dir.join("config.toml");
     std::fs::write(&path, config).unwrap();
@@ -121,7 +121,7 @@ async fn options_probe(sip: SocketAddr) -> (u16, bool) {
     (status, text.to_ascii_lowercase().contains("retry-after:"))
 }
 
-async fn call(sip: SocketAddr, to: &str, secs: f32) -> sip2agent::uac::UacReport {
+async fn call(sip: SocketAddr, to: &str, secs: f32) -> sippipe::uac::UacReport {
     run(UacOptions {
         server: sip,
         to: to.into(),

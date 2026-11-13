@@ -16,8 +16,8 @@ COPY src ./src
 COPY examples ./examples
 RUN --mount=type=cache,target=/usr/local/cargo/registry \
     --mount=type=cache,target=/app/target \
-    cargo build --release --locked --bin sip2agent \
-    && cp target/release/sip2agent /usr/local/bin/sip2agent
+    cargo build --release --locked --bin sippipe \
+    && cp target/release/sippipe /usr/local/bin/sippipe
 
 FROM debian:bookworm-slim
 
@@ -27,8 +27,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 ENV TZ=Asia/Shanghai
 
-COPY --from=builder /usr/local/bin/sip2agent /usr/local/bin/sip2agent
+COPY --from=builder /usr/local/bin/sippipe /usr/local/bin/sippipe
 WORKDIR /app
 # SIP 5060 udp/tcp + RTP 端口段(与 config.toml [rtp] 保持一致;生产建议 network_mode: host)
 EXPOSE 5060/udp 5060/tcp 20000-20999/udp
-CMD ["sip2agent", "-c", "/app/config.toml"]
+CMD ["sippipe", "-c", "/app/config.toml"]

@@ -82,7 +82,7 @@ impl Default for RtpConfig {
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct LogConfig {
-    /// tracing EnvFilter directive, e.g. `info` or `sip2agent=debug,info`.
+    /// tracing EnvFilter directive, e.g. `info` or `sippipe=debug,info`.
     /// `RUST_LOG` overrides it when set.
     #[serde(default = "default_log_level")]
     pub level: String,
@@ -96,7 +96,7 @@ impl Default for LogConfig {
     }
 }
 
-/// Local admin API (`sip2agent reload|stop|status` talk to it).
+/// Local admin API (`sippipe reload|stop|status` talk to it).
 #[derive(Debug, Clone, Deserialize, PartialEq)]
 #[serde(deny_unknown_fields)]
 pub struct AdminConfig {
@@ -255,7 +255,7 @@ fn default_sip_listen() -> SocketAddr {
     "0.0.0.0:5060".parse().expect("static addr")
 }
 fn default_user_agent() -> String {
-    format!("sip2agent/{}", env!("CARGO_PKG_VERSION"))
+    format!("sippipe/{}", env!("CARGO_PKG_VERSION"))
 }
 fn default_rtp_bind() -> IpAddr {
     "0.0.0.0".parse().expect("static ip")
@@ -714,7 +714,7 @@ provider = "echo"
 
     #[test]
     fn shared_config_rejects_invalid_and_swaps_valid() {
-        let dir = std::env::temp_dir().join(format!("sip2agent-reload-{}", uuid::Uuid::new_v4()));
+        let dir = std::env::temp_dir().join(format!("sippipe-reload-{}", uuid::Uuid::new_v4()));
         std::fs::create_dir_all(&dir).unwrap();
         let path = dir.join("config.toml");
         std::fs::write(&path, SAMPLE).unwrap();
@@ -750,7 +750,7 @@ provider = "echo"
         let dbg = format!("{a:?}");
         assert!(!dbg.contains("sk-secret"));
         a.api_key = None;
-        a.api_key_env = Some("SIP2AGENT_TEST_NONEXISTENT_ENV".into());
+        a.api_key_env = Some("SIPPIPE_TEST_NONEXISTENT_ENV".into());
         assert_eq!(a.resolve_api_key(), None);
     }
 }

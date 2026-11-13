@@ -1530,7 +1530,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e"
 
 [[package]]
-name = "sip2agent"
+name = "sippipe"
 version = "0.1.4"
 dependencies = [
  "anyhow",

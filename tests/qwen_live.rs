@@ -1,21 +1,21 @@
 //! Live calls against the real Qwen-Omni realtime endpoint. Skipped unless
-//! `SIP2AGENT_QWEN_LIVE=1`:
+//! `SIPPIPE_QWEN_LIVE=1`:
 //!
 //! ```sh
 //! say -v Tingting -o $DIR/ask.wav --data-format=LEI16@8000 "你好，我想查一下订单，订单号是一二三四五。"
 //! say -v Tingting -o $DIR/q.wav   --data-format=LEI16@8000 "请问你们周末营业吗？"
-//! SIP2AGENT_QWEN_LIVE=1 SIP2AGENT_LIVE_DIR=$DIR QWEN_URL=wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/realtime \
+//! SIPPIPE_QWEN_LIVE=1 SIPPIPE_LIVE_DIR=$DIR QWEN_URL=wss://{WorkspaceId}.cn-beijing.maas.aliyuncs.com/api-ws/v1/realtime \
 //!   DASHSCOPE_API_KEY=sk-... cargo test --test qwen_live -- --nocapture --test-threads=1
 //! ```
 //!
-//! Full SIP path: test UAC → sip2agent → Qwen. The downlink is recorded to
+//! Full SIP path: test UAC → sippipe → Qwen. The downlink is recorded to
 //! `$DIR/live_*.wav` for listening.
 
 mod common;
 
 use common::*;
 use serde_json::{Value, json};
-use sip2agent::uac::{UacOptions, read_wav, run, write_wav};
+use sippipe::uac::{UacOptions, read_wav, run, write_wav};
 use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::Duration;
@@ -24,12 +24,12 @@ const GREETING: &str =
     "您好，这里是星光商城客服中心，我是智能客服小星，很高兴为您服务，请问今天有什么可以帮您的吗？";
 
 fn live_dir() -> Option<PathBuf> {
-    if std::env::var("SIP2AGENT_QWEN_LIVE").as_deref() != Ok("1") {
-        eprintln!("skip: SIP2AGENT_QWEN_LIVE != 1");
+    if std::env::var("SIPPIPE_QWEN_LIVE").as_deref() != Ok("1") {
+        eprintln!("skip: SIPPIPE_QWEN_LIVE != 1");
         return None;
     }
     Some(PathBuf::from(
-        std::env::var("SIP2AGENT_LIVE_DIR").expect("SIP2AGENT_LIVE_DIR"),
+        std::env::var("SIPPIPE_LIVE_DIR").expect("SIPPIPE_LIVE_DIR"),
     ))
 }
 

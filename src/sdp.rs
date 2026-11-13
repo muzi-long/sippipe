@@ -128,8 +128,8 @@ pub fn build_answer(local_ip: IpAddr, rtp_port: u16, codec: G711, session_id: u6
     let pt = codec.payload_type();
     format!(
         "v=0\r\n\
-         o=sip2agent {session_id} {session_id} IN {ip_ver} {local_ip}\r\n\
-         s=sip2agent\r\n\
+         o=sippipe {session_id} {session_id} IN {ip_ver} {local_ip}\r\n\
+         s=sippipe\r\n\
          c=IN {ip_ver} {local_ip}\r\n\
          t=0 0\r\n\
          m=audio {rtp_port} RTP/AVP {pt}\r\n\

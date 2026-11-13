@@ -1,11 +1,11 @@
-//! Test UAC: place one call to sip2agent, stream a 440 Hz tone, report RTP.
+//! Test UAC: place one call to sippipe, stream a 440 Hz tone, report RTP.
 //!
 //! cargo run --example uac -- --server 127.0.0.1:5060 --to 9000 --secs 5 [--codec pcmu] [--wait]
 //!
 //! `--wait` keeps the call up until the far end hangs up (or --secs elapses).
 
-use sip2agent::audio::g711::G711;
-use sip2agent::uac::{UacOptions, run};
+use sippipe::audio::g711::G711;
+use sippipe::uac::{UacOptions, run};
 use std::time::Duration;
 
 #[tokio::main]

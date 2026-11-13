@@ -1,6 +1,6 @@
 main:
   push:
-    - name: build-sip2agent
+    - name: build-sippipe
       runner:
         tags: cnb:arch:amd64
       services:
@@ -8,7 +8,7 @@ main:
       docker:
         volumes:
           - /usr/local/cargo/registry
-          - /root/.cache/sip2agent-target
+          - /root/.cache/sippipe-target
       env:
         # 镜像地址 = 仓库所在 cnb 镜像仓库 + 仓库路径(小写)
         IMAGE: ${CNB_DOCKER_REGISTRY}/${CNB_REPO_SLUG_LOWERCASE}
@@ -17,7 +17,7 @@ main:
           image: rust:1.92-bookworm
           env:
             # target 目录挂 volume,跨构建复用增量产物
-            CARGO_TARGET_DIR: /root/.cache/sip2agent-target
+            CARGO_TARGET_DIR: /root/.cache/sippipe-target
           script:
             # crates 走 rsproxy.cn 国内镜像,防 crates.io 链路抖动(与 Dockerfile 一致)
             - printf '[source.crates-io]\nreplace-with = "rsproxy-sparse"\n[source.rsproxy-sparse]\nregistry = "sparse+https://rsproxy.cn/index/"\n' > /usr/local/cargo/config.toml
@@ -39,7 +39,7 @@ main:
 # 补发历史 tag(config 须走 --data 的 JSON,--config 会把 \n 转义吃掉):
 #   cnb build start-build --repo <仓库> --data "$(python3 -c "import json;print(json.dumps({'tag':'vX.Y.Z','event':'api_trigger_release','config':open('.cnb.yml').read()}))")"
 .release: &release
-  - name: release-sip2agent
+  - name: release-sippipe
     runner:
       tags: cnb:arch:amd64
     services:
@@ -61,10 +61,10 @@ main:
             set -e
             mkdir -p dist
             for t in x86_64-unknown-linux-gnu aarch64-unknown-linux-gnu; do
-              cargo build --release --locked --bin sip2agent --target $t
-              name=sip2agent-${CNB_BRANCH}-$t
+              cargo build --release --locked --bin sippipe --target $t
+              name=sippipe-${CNB_BRANCH}-$t
               mkdir -p dist/$name
-              cp target/$t/release/sip2agent config.example.toml README.md LICENSE dist/$name/
+              cp target/$t/release/sippipe config.example.toml README.md LICENSE dist/$name/
               tar -C dist -czf dist/$name.tar.gz $name
               (cd dist && sha256sum $name.tar.gz > $name.tar.gz.sha256)
               rm -rf dist/$name

@@ -22,7 +22,7 @@ use tokio_util::sync::CancellationToken;
 
 #[derive(Debug, Clone)]
 pub struct UacOptions {
-    /// sip2agent SIP address.
+    /// sippipe SIP address.
     pub server: SocketAddr,
     /// Called number (request-URI user).
     pub to: String,
@@ -96,7 +96,7 @@ pub async fn run(opts: UacOptions) -> Result<UacReport> {
     let endpoint = EndpointBuilder::new()
         .with_cancel_token(cancel.clone())
         .with_transport_layer(tl)
-        .with_user_agent("sip2agent-test-uac")
+        .with_user_agent("sippipe-test-uac")
         .build();
     let dialog_layer = Arc::new(DialogLayer::new(endpoint.inner.clone()));
     let (state_tx, mut state_rx) = dialog_layer.new_dialog_state_channel();
@@ -313,7 +313,7 @@ mod tests {
         assert_eq!(f1[19], 7);
         assert_eq!(f1[20], 0);
 
-        let dir = std::env::temp_dir().join(format!("sip2agent-wav-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("sippipe-wav-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
         let p = dir.join("t.wav");
         write_wav(&p, &[1, -2, 3], 8000).unwrap();

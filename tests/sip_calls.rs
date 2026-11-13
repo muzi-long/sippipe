@@ -1,4 +1,4 @@
-//! End-to-end SIP tests: in-process sip2agent + rsipstack test UAC over
+//! End-to-end SIP tests: in-process sippipe + rsipstack test UAC over
 //! loopback UDP, with mock WebSocket / HTTP servers.
 
 mod common;
@@ -6,9 +6,9 @@ mod common;
 use common::*;
 use futures::{SinkExt, StreamExt};
 use serde_json::json;
-use sip2agent::audio::g711::G711;
-use sip2agent::config::Config;
-use sip2agent::uac::{UacOptions, run};
+use sippipe::audio::g711::G711;
+use sippipe::config::Config;
+use sippipe::uac::{UacOptions, run};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
 use tokio_tungstenite::tungstenite::Message;

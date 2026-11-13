@@ -1,7 +1,7 @@
 use anyhow::{Context, Result};
-use sip2agent::admin::{self, AdminState, LogApplier, Reloader};
-use sip2agent::config::{Config, SharedConfig};
-use sip2agent::sip::SipServer;
+use sippipe::admin::{self, AdminState, LogApplier, Reloader};
+use sippipe::config::{Config, SharedConfig};
+use sippipe::sip::SipServer;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tokio_util::sync::CancellationToken;
@@ -37,7 +37,7 @@ async fn main() -> Result<()> {
                 return Ok(());
             }
             "-V" | "--version" => {
-                println!("sip2agent {}", env!("CARGO_PKG_VERSION"));
+                println!("sippipe {}", env!("CARGO_PKG_VERSION"));
                 return Ok(());
             }
             other => anyhow::bail!("unknown argument '{other}'\n{}", admin::CLI_USAGE),
@@ -67,7 +67,7 @@ async fn main() -> Result<()> {
         tracing::info!(agent = %a.name, r#match = %a.match_user, provider = a.provider.as_str(), "agent loaded");
     }
 
-    sip2agent::install_crypto_provider();
+    sippipe::install_crypto_provider();
     let admin_addr = cfg.admin.addr()?;
     let shared = Arc::new(SharedConfig::new(cfg));
     let server = SipServer::bind_shared(shared.clone()).await?;
@@ -100,7 +100,7 @@ async fn main() -> Result<()> {
         if !addr.ip().is_loopback() {
             tracing::warn!(%addr, "admin API is not on a loopback address: anyone who can reach it can reload / stop the server");
         }
-        tracing::info!(%addr, "admin API listening (sip2agent reload | stop | status)");
+        tracing::info!(%addr, "admin API listening (sippipe reload | stop | status)");
         let state = Arc::new(AdminState {
             reloader,
             control: server.control(),
@@ -135,7 +135,7 @@ async fn wait_for_signal() {
     }
 }
 
-/// SIGHUP → same reload as `sip2agent reload`. Invalid files are rejected
+/// SIGHUP → same reload as `sippipe reload`. Invalid files are rejected
 /// (running config kept); valid ones apply to new calls only.
 #[cfg(unix)]
 async fn reload_on_sighup(reloader: Arc<Reloader>) {
